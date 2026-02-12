@@ -1,0 +1,21 @@
+{
+  "name": "recife-events-mvp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "csv-parser": "^3.2.0",
+    "csv-writer": "^1.6.0",
+    "date-fns": "^4.1.0",
+    "express": "^5.2.1",
+    "puppeteer": "^24.37.2"
+  }
+}

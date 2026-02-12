@@ -1,0 +1,7 @@
+Id,Nome,Descricao,Data,Local,Horario,Gratuito,Tipo,Saved
+001,Workshop de Go e Microsserviços,Aprenda arquitetura escalável com especialistas do Porto Digital.,14-02-2026,Cesar School,19:00,true,Tecnologia,true
+002,Festival de Jazz do Capibaribe,Uma noite de jazz experimental e vinhos à beira do rio.,15-02-2026,Paço Alfândega,20:00,false,Música,true
+003,Encontro de RPG: O Tarrasque,Mesas de D&D 5e e Tormenta20.,18-02-2026,Livraria Jaqueira,14:00,true,Geek,false
+004,Exposição Chico Science,Arte digital e projeções mapeadas.,20-02-2026,Torre Malakoff,10:00,true,Cultura,false
+005,Startups & Investidores PE,Networking de alto nível para fundadores.,22-02-2026,Arcádia Boa Viagem,21:00,false,Negócios,true
+006,Hackathon Code for Recife,Maratona de 48h para criar soluções urbanas.,28-02-2026,Armazém 14,08:00,true,Tecnologia,false

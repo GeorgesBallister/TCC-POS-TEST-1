@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventos Recife - MVP</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="pe-header">
+        <div class="container">
+            <h1>Eventos Recife ☀️☂️</h1>
+            <p>Descubra o que fazer na Veneza Brasileira</p>
+            <button id="btn-sync" onclick="syncEvents()">🔄 Sincronizar Novos Eventos</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="filters-card">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Buscar por nome, local...">
+            </div>
+            <div class="advanced-filters">
+                <input type="date" id="filter-date-start">
+                <input type="date" id="filter-date-end">
+                <select id="filter-type">
+                    <option value="">Todos os Tipos</option>
+                    <option value="Teatro">Teatro</option>
+                    <option value="Show">Show</option>
+                    <option value="Cultura">Cultura</option>
+                </select>
+                <button onclick="applyFilters()" class="btn-primary">Filtrar</button>
+            </div>
+        </section>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('all')">Todos os Eventos</button>
+            <button class="tab-btn" onclick="switchTab('saved')">Meus Interesses ❤️</button>
+        </div>
+
+        <div id="events-grid" class="events-grid">
+            <p class="loading">Carregando eventos...</p>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
