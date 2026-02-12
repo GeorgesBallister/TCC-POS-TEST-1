@@ -1,8 +1,3 @@
-Com certeza, Georges. Como mentor, preparei um **README.md** de nível profissional.
-
-Este documento não apenas apresenta o código, mas vende a sua imagem de **Engenheiro de Software**. Destaquei a arquitetura MVC, o uso de algoritmos de scraping e a estrutura de dados, pois isso mostra maturidade técnica para recrutadores (inclusive na Europa).
-
-Copie o código abaixo e cole no seu arquivo `README.md`.
 
 ---
 
