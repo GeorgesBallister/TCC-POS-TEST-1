@@ -8,8 +8,32 @@ const search = new SerpApi.GoogleSearch(API_KEY);
 /**
  * Busca eventos em Recife usando a Google Events API via SerpApi.
  */
+/**
+ * Helper para buscar uma única página de eventos
+ */
+const fetchEventsPage = (offset) => {
+    return new Promise((resolve, reject) => {
+        const params = {
+            engine: "google_events",
+            q: "eventos em recife",
+            hl: "pt",
+            gl: "br",
+            start: offset // Paginação (0, 10, 20...)
+        };
+
+        search.json(params, (data) => {
+            if (data.error) return reject(data.error);
+            resolve(data.events_results || []);
+        });
+    });
+};
+
+/**
+ * Busca eventos em Recife usando a Google Events API via SerpApi.
+ * Tenta buscar múltiplas páginas se não encontrar novos eventos de imediato.
+ */
 const scrapeEvents = async () => {
-    console.log('🔄 Iniciando busca via Google Events API...');
+    console.log('🔄 Iniciando busca inteligente via Google Events API...');
 
     // 1. Carregar banco atual
     let currentDb = [];
@@ -26,24 +50,40 @@ const scrapeEvents = async () => {
         if (ids.length > 0) nextId = Math.max(...ids) + 1;
     }
 
-    // 3. Configurar busca
-    const params = {
-        engine: "google_events",
-        q: "eventos em recife",
-        hl: "pt",
-        gl: "br"
-    };
+    let allNewEvents = [];
+    let offset = 0;
+    const MAX_PAGES = 3; // Limite de segurança para não gastar toda a API
+    const TARGET_NEW_EVENTS = 5; // Tenta buscar até achar pelo menos 5 novos
 
-    return new Promise((resolve, reject) => {
-        // Callback para SerpApi
-        search.json(params, async (data) => {
-            try {
-                const newEvents = [];
-                const eventsResults = data.events_results || [];
+    console.log(`🎯 Meta: Encontrar pelo menos ${TARGET_NEW_EVENTS} novos eventos.`);
 
-                console.log(`🔎 API encontrou ${eventsResults.length} eventos.`);
+    for (let page = 0; page < MAX_PAGES; page++) {
+        if (allNewEvents.length >= TARGET_NEW_EVENTS) break;
 
-                eventsResults.forEach(item => {
+        console.log(`🔎 Buscando página ${page + 1} (offset ${offset})...`);
+
+        try {
+            const eventsResults = await fetchEventsPage(offset);
+
+            if (!eventsResults || eventsResults.length === 0) {
+                console.log('⚠️ Fim dos resultados na API.');
+                break;
+            }
+
+            // Processar resultados da página
+            const pageEvents = [];
+            eventsResults.forEach(item => {
+                // Checa duplicidade com o banco JÁ EXISTENTE
+                const isDuplicateInDb = currentDb.some(curr =>
+                    curr.nome && item.title && curr.nome.toLowerCase() === item.title.toLowerCase()
+                );
+
+                // Checa duplicidade com o que JÁ ACHAMOS nesta execução
+                const isDuplicateInCurrentBatch = allNewEvents.some(ne =>
+                    ne.nome && item.title && ne.nome.toLowerCase() === item.title.toLowerCase()
+                );
+
+                if (!isDuplicateInDb && !isDuplicateInCurrentBatch) {
                     // Extração segura dos dados
                     const dateInfo = item.date ? item.date.when : "Data a confirmar";
                     const address = item.address ? item.address[0] : "Recife";
@@ -51,63 +91,49 @@ const scrapeEvents = async () => {
                     const title = item.title || "Evento sem nome";
                     const description = item.description || "Sem descrição disponível.";
 
-                    // Tenta extrair data estruturada (simplificado)
-                    // O Google retorna texto livre como "Sex, 14 de fev", então mantemos como string
-                    // Para o MVP, vamos formatar a string de data para dd-mm-yyyy se possível,
-                    // ou usar a data de hoje se falhar, para manter compatibilidade com o filtro.
-                    // A melhor abordagem agora é salvar o texto original e melhorar o parser depois.
-                    // Para evitar quebrar o app que espera dd-mm-yyyy:
-
                     const today = new Date();
                     const day = String(today.getDate()).padStart(2, '0');
                     const month = String(today.getMonth() + 1).padStart(2, '0');
                     const year = today.getFullYear();
                     const fallbackDate = `${day}-${month}-${year}`;
 
-                    newEvents.push({
+                    pageEvents.push({
                         id: String(nextId++).padStart(3, '0'),
                         nome: title,
                         descricao: description.substring(0, 150) + (description.length > 150 ? '...' : ''),
-                        data: fallbackDate, // Por enquanto, usando data de hoje para não quebrar filtro de data
+                        data: fallbackDate,
                         local: address,
-                        horario: dateInfo, // Usando o campo horário para guardar a info de data textual do Google
-                        gratuito: false, // Google Events nem sempre diz se é grátis
+                        horario: dateInfo,
+                        gratuito: false,
                         tipo: "Eventos Google",
                         link: link,
                         saved: false
                     });
-                });
-
-                if (newEvents.length === 0) {
-                    console.log('⚠️ Nenhum evento novo encontrado pela API.');
-                    resolve(currentDb);
-                    return;
                 }
+            });
 
-                // 4. Salvar (Deduplicação simples por nome)
-                const finalEventsToAdd = newEvents.filter(ne =>
-                    !currentDb.some(curr =>
-                        curr.nome && ne.nome &&
-                        curr.nome.toLowerCase() === ne.nome.toLowerCase()
-                    )
-                );
+            console.log(`   -> Encontrados ${pageEvents.length} eventos INÉDITOS nesta página.`);
+            allNewEvents = [...allNewEvents, ...pageEvents];
 
-                if (finalEventsToAdd.length > 0) {
-                    const updatedList = [...currentDb, ...finalEventsToAdd];
-                    await saveEvents(updatedList);
-                    console.log(`✅ ${finalEventsToAdd.length} novos eventos salvos.`);
-                    resolve(updatedList);
-                } else {
-                    console.log('zzz Todos os eventos já estavam cadastrados.');
-                    resolve(currentDb);
-                }
+            // Prepara para próxima página
+            offset += 10;
 
-            } catch (error) {
-                console.error('Erro ao processar dados da API:', error);
-                reject(error);
-            }
-        });
-    });
+        } catch (error) {
+            console.error('Erro ao buscar página:', error);
+            break; // Para se der erro
+        }
+    }
+
+    // 4. Salvar tudo
+    if (allNewEvents.length > 0) {
+        const updatedList = [...currentDb, ...allNewEvents];
+        await saveEvents(updatedList);
+        console.log(`✅ SUCESSO: ${allNewEvents.length} novos eventos salvos no total.`);
+        return updatedList;
+    } else {
+        console.log('zzz Nenhum evento novo encontrado após varredura.');
+        return currentDb;
+    }
 };
 
 module.exports = { scrapeEvents };

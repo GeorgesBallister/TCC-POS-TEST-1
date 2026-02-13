@@ -315,3 +315,126 @@ body {
 .btn-link:hover {
     background: #E5E5EA;
 }
+
+/* Filter Menu - Drawer Style */
+.filter-menu {
+    position: fixed;
+    top: 0;
+    right: -320px;
+    /* Hidden by default */
+    width: 300px;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: -5px 0 30px rgba(0, 0, 0, 0.1);
+    z-index: 2000;
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-menu.open {
+    right: 0;
+}
+
+.filter-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.filter-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.filter-header button {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.filter-content {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.advanced-filters-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.advanced-filters-vertical label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: -5px;
+}
+
+.advanced-filters-vertical input,
+.advanced-filters-vertical select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #D2D2D7;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    background: white;
+    box-sizing: border-box;
+}
+
+.full-width {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    font-size: 16px;
+    background: var(--accent-blue);
+    /* Primary Action Color */
+}
+
+/* Floating Action Button (FAB) */
+.fab-filter {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--text-primary);
+    color: white;
+    border: none;
+    padding: 16px 24px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 1500;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fab-filter:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 16px;
+    }
+
+    .events-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pe-header h1 {
+        font-size: 20px;
+    }
+}
