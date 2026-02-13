@@ -1,7 +1,11 @@
-Id,Nome,Descricao,Data,Local,Horario,Gratuito,Tipo,Saved
-001,Workshop de Go e Microsserviços,Aprenda arquitetura escalável com especialistas do Porto Digital.,14-02-2026,Cesar School,19:00,true,Tecnologia,true
-002,Festival de Jazz do Capibaribe,Uma noite de jazz experimental e vinhos à beira do rio.,15-02-2026,Paço Alfândega,20:00,false,Música,true
-003,Encontro de RPG: O Tarrasque,Mesas de D&D 5e e Tormenta20.,18-02-2026,Livraria Jaqueira,14:00,true,Geek,false
-004,Exposição Chico Science,Arte digital e projeções mapeadas.,20-02-2026,Torre Malakoff,10:00,true,Cultura,false
-005,Startups & Investidores PE,Networking de alto nível para fundadores.,22-02-2026,Arcádia Boa Viagem,21:00,false,Negócios,true
-006,Hackathon Code for Recife,Maratona de 48h para criar soluções urbanas.,28-02-2026,Armazém 14,08:00,true,Tecnologia,false
+Id,Nome,Descricao,Data,Local,Horario,Gratuito,Tipo,Link,Saved
+001,ALMA DE CARNAVAL 2026,Sem descrição disponível.,12-02-2026,"Alma Arte Café - Ladeira da Misericórdia, 106 - Carmo","sáb., 14 de fev. – ter., 17 de fev.",false,Eventos Google,https://www.last.fm/pt/music/Ave+Sangria/+events,false
+002,Carnaval de Olinda,Sem descrição disponível.,12-02-2026,Olinda - Av Dr. José Augusto Moreira - Casa Caiada,"sáb., 14 de fev., 06:00 – ter., 17 de fev., 18:00",false,Eventos Google,https://www.eventbrite.com.br/d/brazil--recife/gratuito/,false
+003,CARNAVAL DO RECIFE 2026 - PÁTIO DE SÃO PEDRO,Sem descrição disponível.,12-02-2026,"Pátio de São Pedro - R. São Pedro, 31 - São José","sex., 13 de fev. – ter., 17 de fev.",false,Eventos Google,https://www.last.fm/music/Banda+De+Pau+E+Corda/+events,false
+004,Chico César em Recife (Carnaval - part. show de Maestro Spok),Sem descrição disponível.,12-02-2026,Praça do Marco Zero - Av. Alfredo Lisboa,"sex., 13 de fev., 18:30 – sáb., 14 de fev., 02:00",false,Eventos Google,https://open.spotify.com/concert/6ovN2A6ocGr4hhDwD7I5av,false
+005,QG do YUNI,Sem descrição disponível.,12-02-2026,"Yuni karaokê & Bar - Av. Marquês de Olinda, 290 - Recife","qui., 12 de fev., 18:00 – seg., 16 de fev., 01:00",false,Eventos Google,https://www.sympla.com.br/qg-do-yuni__3272440,false
+006,"Orquestra Popular do Recife, Bloco do Silva, Liniker, Ludmilla, Anderson Neiff e Recife Capital do Brega",Sem descrição disponível.,12-02-2026,Praça do Marco Zero - Av. Alfredo Lisboa,"sáb., 14 de fev., 00:00 – dom., 15 de fev., 02:00",false,Eventos Google,https://www.godela.com.br/evento/49667/orquestra-popular-do-recife-bloco-do-silva-liniker-ludmilla-anderson-neiff-e-recife-capital-do-brega/,false
+007,CARVALHEIRA NA LADEIRA 2026,"1 event in Olinda, Brazil - Arena Carvalheira na Ladeira",12-02-2026,Parque Memorial Arcoverde,"dom., 15 de fev., 01:00 – ter., 17 de fev., 23:59",false,Eventos Google,https://www.viagogo.com/au/Concert-Tickets/Club-and-dance/Tilia-Tickets,false
+008,Galo da Madrugada,Sem descrição disponível.,12-02-2026,"Aeroporto Internacional do Recife/Guararapes - Gilberto Freyre - Praça Min. Salgado Filho, s/n - Imbiribeira","sáb., 14 de fev., 05:00 – 18:00",false,Eventos Google,https://www.eventbrite.com.br/e/galo-da-madrugada-tickets-1977526997483,false
+009,"Martins, Sambarrasta, Elvis e Let Azevedo",Sem descrição disponível.,12-02-2026,"Mansão Olinda - Ladeira da Sé, 143 - Bultrins","sáb., 14 de fev., 12:00 – 22:00",false,Eventos Google,https://www.godela.com.br/evento/49441/martins-sambarrasta-elvis-e-let-azevedo/,false
+010,CARNAVAL DO RECIFE 2026 - MARCO ZERO,Sem descrição disponível.,12-02-2026,Praça do Marco Zero - Av. Alfredo Lisboa,"qui., 12 de fev. – ter., 17 de fev.",false,Eventos Google,https://www.last.fm/pt/festival/4997109+CARNAVAL+DO+RECIFE+2026+-+MARCO+ZERO,false

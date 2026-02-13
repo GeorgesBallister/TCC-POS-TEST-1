@@ -14,8 +14,8 @@ const getEvents = async (req, res) => {
 // Trigger manual scrape
 const triggerScrape = async (req, res) => {
     try {
-        await scraperService.scrapeEvents();
-        const events = await dbService.readEvents();
+        const events = await scraperService.scrapeEvents();
+        // Removed redundant dbService.readEvents() call to avoid file lock issues
         res.json({ message: 'Scrape successful', data: events });
     } catch (error) {
         res.status(500).json({ error: 'Scraping failed.' });
@@ -28,7 +28,7 @@ const toggleSave = async (req, res) => {
     try {
         const events = await dbService.readEvents();
         const eventIndex = events.findIndex(e => e.id === id);
-        
+
         if (eventIndex !== -1) {
             // Toggle boolean
             events[eventIndex].saved = !events[eventIndex].saved;

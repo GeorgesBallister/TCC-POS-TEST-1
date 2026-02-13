@@ -23,6 +23,7 @@ const csvWriter = createCsvWriter({
         { id: 'horario', title: 'Horario' },
         { id: 'gratuito', title: 'Gratuito' },
         { id: 'tipo', title: 'Tipo' },
+        { id: 'link', title: 'Link' },
         { id: 'saved', title: 'Saved' }
     ]
 });
@@ -73,8 +74,9 @@ const saveEvents = async (events) => {
             if (parts.length !== 3) return false;
 
             const [day, month, year] = parts;
-            // Cria data no formato ISO (yyyy-mm-dd) para o construtor Date
-            const eventDate = new Date(`${year}-${month}-${day}`);
+            // Helper para criar data em fuso local (00:00:00)
+            // O construtor new Date(ano, mes-1, dia) usa o fuso local do sistema
+            const eventDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
 
             // Se a data for inválida (ex: 30 de fevereiro), ignora
             if (isNaN(eventDate)) return false;

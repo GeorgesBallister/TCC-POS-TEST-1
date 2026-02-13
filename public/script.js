@@ -67,9 +67,9 @@ function renderEvents() {
         if (currentTab === 'saved' && !e.saved) return false;
 
         // Search Filter
-        const matchesSearch = e.nome.toLowerCase().includes(searchTerm) || 
-                              e.local.toLowerCase().includes(searchTerm);
-        
+        const matchesSearch = e.nome.toLowerCase().includes(searchTerm) ||
+            e.local.toLowerCase().includes(searchTerm);
+
         // Type Filter
         const matchesType = typeFilter ? e.tipo.includes(typeFilter) : true;
 
@@ -77,7 +77,7 @@ function renderEvents() {
         // Converting dd-mm-yyyy to yyyy-mm-dd for string comparison
         const [d, m, y] = e.data.split('-');
         const eventDateISO = `${y}-${m}-${d}`;
-        
+
         const matchesStart = dateStart ? eventDateISO >= dateStart : true;
         const matchesEnd = dateEnd ? eventDateISO <= dateEnd : true;
 
@@ -101,16 +101,26 @@ function renderEvents() {
                 <h3 class="card-title">${e.nome}</h3>
                 <div class="card-info">📍 ${e.local} | 🕒 ${e.horario}</div>
                 <div class="card-info">💰 ${e.gratuito ? 'Gratuito' : 'Pago'}</div>
+                
+                <div style="margin-top: 10px; display: flex; gap: 10px;">
+                    ${e.link && e.link !== '#' ? `<a href="${e.link}" target="_blank" class="btn-link">Ver mais ↗</a>` : ''}
+                </div>
+
                 <p class="card-desc">${e.descricao}</p>
             </div>
             <div class="card-footer">
                 <button class="btn-save ${e.saved ? 'saved' : ''}" onclick="toggleSave('${e.id}')">
-                    ${e.saved ? 'Salvo' : 'Salvar'}
+                    ${e.saved ? '❤️ Salvo' : '🤍 Salvar'}
                 </button>
             </div>
         `;
         grid.appendChild(card);
     });
+}
+
+function toggleFilters() {
+    const menu = document.getElementById('filter-menu');
+    menu.classList.toggle('open');
 }
 
 function switchTab(tab) {

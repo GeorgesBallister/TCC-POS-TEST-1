@@ -20,22 +20,39 @@
     </header>
 
     <main class="container">
-        <section class="filters-card">
-            <div class="search-box">
-                <input type="text" id="search-input" placeholder="Buscar por nome, local...">
+        <!-- Retractable Filter Menu -->
+        <div id="filter-menu" class="filter-menu">
+            <div class="filter-header">
+                <h3>Filtros</h3>
+                <button id="close-filters" onclick="toggleFilters()">×</button>
             </div>
-            <div class="advanced-filters">
-                <input type="date" id="filter-date-start">
-                <input type="date" id="filter-date-end">
-                <select id="filter-type">
-                    <option value="">Todos os Tipos</option>
-                    <option value="Teatro">Teatro</option>
-                    <option value="Show">Show</option>
-                    <option value="Cultura">Cultura</option>
-                </select>
-                <button onclick="applyFilters()" class="btn-primary">Filtrar</button>
+            <div class="filter-content">
+
+                <div class="advanced-filters-vertical">
+                    <label>Data Início</label>
+                    <input type="date" id="filter-date-start">
+                    <label>Data Fim</label>
+                    <input type="date" id="filter-date-end">
+                    <label>Tipo de Evento</label>
+                    <select id="filter-type">
+                        <option value="">Todos os Tipos</option>
+                        <option value="Teatro">Teatro</option>
+                        <option value="Show">Show</option>
+                        <option value="Cultura">Cultura</option>
+                    </select>
+                    <button onclick="applyFilters()" class="btn-primary full-width">Filtrar</button>
+                </div>
             </div>
-        </section>
+        </div>
+
+        <!-- Floating Action Button for Filters -->
+        <button id="fab-filter" class="fab-filter" onclick="toggleFilters()">
+            🌪️ Filtros
+        </button>
+
+        <div class="search-section">
+            <input type="text" id="search-input" placeholder="🔍 Buscar eventos por nome, local...">
+        </div>
 
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('all')">Todos os Eventos</button>

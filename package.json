@@ -16,6 +16,7 @@
     "csv-writer": "^1.6.0",
     "date-fns": "^4.1.0",
     "express": "^5.2.1",
+    "google-search-results-nodejs": "^2.1.0",
     "puppeteer": "^24.37.2"
   }
 }

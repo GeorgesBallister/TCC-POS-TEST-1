@@ -78,14 +78,28 @@ body {
     transform: scale(1.02);
 }
 
-/* Filters Panel - Floating Card */
-.filters-card {
-    background: var(--card-bg);
-    padding: 24px;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    margin: 30px 0;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+.search-section {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.search-section input {
+    width: 100%;
+    max-width: 600px;
+    padding: 16px 24px;
+    border: 1px solid transparent;
+    border-radius: 30px;
+    font-size: 16px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.search-section input:focus {
+    box-shadow: 0 6px 20px rgba(0, 113, 227, 0.15);
+    border-color: rgba(0, 113, 227, 0.3);
 }
 
 .search-box input {
@@ -287,6 +301,17 @@ body {
     }
 }
 
-.event-card {
-    animation: fadeIn 0.5s ease backwards;
+.btn-link {
+    text-decoration: none;
+    background: #F2F2F7;
+    color: var(--accent-blue);
+    padding: 6px 12px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.btn-link:hover {
+    background: #E5E5EA;
 }

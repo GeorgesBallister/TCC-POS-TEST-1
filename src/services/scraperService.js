@@ -1,129 +1,113 @@
-const puppeteer = require('puppeteer');
+const SerpApi = require('google-search-results-nodejs');
 const { readEvents, saveEvents } = require('./databaseService');
 
+// API Key fornecida pelo usuário
+const API_KEY = "81bc9cb3c616192119614b3443dec5d664a906e1f4244cd713521feb42678e11";
+const search = new SerpApi.GoogleSearch(API_KEY);
+
 /**
- * Scrapes DuckDuckGo for events in Recife.
- * INCLUI SISTEMA DE FALLBACK: Se o site bloquear o robô, geramos dados simulados
- * para garantir que o MVP funcione na apresentação.
+ * Busca eventos em Recife usando a Google Events API via SerpApi.
  */
 const scrapeEvents = async () => {
-    console.log('🔄 Iniciando processo de scraping...');
-    
-    // 1. CARREGAR BANCO ATUAL
+    console.log('🔄 Iniciando busca via Google Events API...');
+
+    // 1. Carregar banco atual
     let currentDb = [];
     try {
         currentDb = await readEvents();
-        console.log(`📂 Banco atual: ${currentDb.length} eventos.`);
     } catch (err) {
         currentDb = [];
     }
 
-    // 2. CALCULAR PRÓXIMO ID
+    // 2. Calcular próximo ID
     let nextId = 1;
     if (currentDb.length > 0) {
         const ids = currentDb.map(e => parseInt(e.id, 10)).filter(n => !isNaN(n));
         if (ids.length > 0) nextId = Math.max(...ids) + 1;
     }
 
-    let newEvents = [];
-    const browser = await puppeteer.launch({ 
-        headless: "new",
-        args: ['--no-sandbox', '--disable-setuid-sandbox'] // Ajuda a rodar em alguns ambientes
-    }); 
-    
-    try {
-        const page = await browser.newPage();
-        // Tenta buscar no DDG
-        await page.goto('https://duckduckgo.com/?q=agenda+recife+pe+eventos+hoje&t=h_&ia=web', { waitUntil: 'domcontentloaded', timeout: 10000 });
+    // 3. Configurar busca
+    const params = {
+        engine: "google_events",
+        q: "eventos em recife",
+        hl: "pt",
+        gl: "br"
+    };
 
-        // Tenta extrair resultados (Seletores genéricos)
-        const rawResults = await page.evaluate(() => {
-            const results = [];
-            // Tenta pegar qualquer tag H2 que tenha link dentro
-            const items = document.querySelectorAll('h2'); 
-            items.forEach((h2) => {
-                const link = h2.querySelector('a');
-                if (link && link.innerText.length > 10) {
-                    results.push({
-                        title: link.innerText,
-                        snippet: 'Evento encontrado na web sobre cultura e lazer em Recife.',
-                        link: link.href
+    return new Promise((resolve, reject) => {
+        // Callback para SerpApi
+        search.json(params, async (data) => {
+            try {
+                const newEvents = [];
+                const eventsResults = data.events_results || [];
+
+                console.log(`🔎 API encontrou ${eventsResults.length} eventos.`);
+
+                eventsResults.forEach(item => {
+                    // Extração segura dos dados
+                    const dateInfo = item.date ? item.date.when : "Data a confirmar";
+                    const address = item.address ? item.address[0] : "Recife";
+                    const link = item.link || "#";
+                    const title = item.title || "Evento sem nome";
+                    const description = item.description || "Sem descrição disponível.";
+
+                    // Tenta extrair data estruturada (simplificado)
+                    // O Google retorna texto livre como "Sex, 14 de fev", então mantemos como string
+                    // Para o MVP, vamos formatar a string de data para dd-mm-yyyy se possível,
+                    // ou usar a data de hoje se falhar, para manter compatibilidade com o filtro.
+                    // A melhor abordagem agora é salvar o texto original e melhorar o parser depois.
+                    // Para evitar quebrar o app que espera dd-mm-yyyy:
+
+                    const today = new Date();
+                    const day = String(today.getDate()).padStart(2, '0');
+                    const month = String(today.getMonth() + 1).padStart(2, '0');
+                    const year = today.getFullYear();
+                    const fallbackDate = `${day}-${month}-${year}`;
+
+                    newEvents.push({
+                        id: String(nextId++).padStart(3, '0'),
+                        nome: title,
+                        descricao: description.substring(0, 150) + (description.length > 150 ? '...' : ''),
+                        data: fallbackDate, // Por enquanto, usando data de hoje para não quebrar filtro de data
+                        local: address,
+                        horario: dateInfo, // Usando o campo horário para guardar a info de data textual do Google
+                        gratuito: false, // Google Events nem sempre diz se é grátis
+                        tipo: "Eventos Google",
+                        link: link,
+                        saved: false
                     });
-                }
-            });
-            return results.slice(0, 5); // Pega no máximo 5
-        });
-
-        console.log(`🔎 O Scraper encontrou ${rawResults.length} resultados reais.`);
-
-        // --- LÓGICA DE PROCESSAMENTO ---
-        const today = new Date();
-
-        // Se achou resultados reais, processa eles
-        rawResults.forEach((res, index) => {
-             // Lógica simplificada para demo
-             const day = String(today.getDate() + index + 2).padStart(2, '0');
-             newEvents.push({
-                id: String(nextId++).padStart(3, '0'),
-                nome: res.title.replace('...', '').trim(),
-                descricao: `Evento extraído da web: ${res.snippet}`,
-                data: `${day}-02-2026`,
-                local: 'Recife (Local a confirmar)',
-                horario: '19:30',
-                gratuito: true,
-                tipo: 'Internet|Geral',
-                saved: false
-             });
-        });
-
-        // --- MODO DE DEMONSTRAÇÃO (FALLBACK) ---
-        // Se o scraper foi bloqueado ou não achou nada, gera dados para o usuário não ficar frustrado
-        if (newEvents.length === 0) {
-            console.log('⚠️ Modo Fallback ativado: Gerando eventos de demonstração para o MVP.');
-            const demoEvents = [
-                { nome: "Meetup: React & Node.js", local: "Accenture Innovation Center", tipo: "Tecnologia" },
-                { nome: "Show: Lenine no Parque", local: "Parque Dona Lindu", tipo: "Show" },
-                { nome: "Feira de Troca de Livros", local: "Praça de Casa Forte", tipo: "Cultura" }
-            ];
-
-            demoEvents.forEach((demo, index) => {
-                const day = String(today.getDate() + index + 5).padStart(2, '0');
-                newEvents.push({
-                    id: String(nextId++).padStart(3, '0'),
-                    nome: demo.nome,
-                    descricao: "Evento sugerido baseado nos seus interesses de tecnologia e cultura local.",
-                    data: `${day}-02-2026`,
-                    local: demo.local,
-                    horario: '18:00',
-                    gratuito: index % 2 === 0,
-                    tipo: demo.tipo,
-                    saved: false
                 });
-            });
-        }
 
-        // Filtrar duplicados finais e salvar
-        // (Removemos duplicatas comparando nomes com o que já existe)
-        const finalEventsToAdd = newEvents.filter(ne => 
-            !currentDb.some(curr => curr.nome.toLowerCase() === ne.nome.toLowerCase())
-        );
+                if (newEvents.length === 0) {
+                    console.log('⚠️ Nenhum evento novo encontrado pela API.');
+                    resolve(currentDb);
+                    return;
+                }
 
-        if (finalEventsToAdd.length > 0) {
-            const updatedList = [...currentDb, ...finalEventsToAdd];
-            await saveEvents(updatedList);
-            console.log(`✅ ${finalEventsToAdd.length} novos eventos salvos com sucesso.`);
-            return updatedList;
-        } else {
-            console.log('zzz Nenhum evento novo (tudo já estava salvo).');
-            return currentDb;
-        }
+                // 4. Salvar (Deduplicação simples por nome)
+                const finalEventsToAdd = newEvents.filter(ne =>
+                    !currentDb.some(curr =>
+                        curr.nome && ne.nome &&
+                        curr.nome.toLowerCase() === ne.nome.toLowerCase()
+                    )
+                );
 
-    } catch (error) {
-        console.error('❌ Erro no Scraper:', error);
-        return currentDb;
-    } finally {
-        await browser.close();
-    }
+                if (finalEventsToAdd.length > 0) {
+                    const updatedList = [...currentDb, ...finalEventsToAdd];
+                    await saveEvents(updatedList);
+                    console.log(`✅ ${finalEventsToAdd.length} novos eventos salvos.`);
+                    resolve(updatedList);
+                } else {
+                    console.log('zzz Todos os eventos já estavam cadastrados.');
+                    resolve(currentDb);
+                }
+
+            } catch (error) {
+                console.error('Erro ao processar dados da API:', error);
+                reject(error);
+            }
+        });
+    });
 };
 
 module.exports = { scrapeEvents };
